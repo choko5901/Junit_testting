@@ -102,4 +102,37 @@ public class BookRepositoryTest {
 
     // 5. 책 수정
 
+    @Test
+    @Sql("classpath:db/tableInit.sql")
+    public void 책수정_test(){
+        // given 클라이언트 한테서 받은 데이터라고 가정
+        Long id = 1L;
+        String title ="junit5 곧 완성";
+        String author = "황동하연구원";
+        Book book = new Book(id, title, author);
+
+        // when
+        Book bookPS = bookRepository.save(book);
+        // 1번이 이미 존재하고 있기때문에 save로 업데이트 친다는 개념으로 생각하면 됩니다
+
+//        bookRepository.findAll().stream()
+//                .forEach(b -> {
+//                    System.out.println(b.getId());
+//                    System.out.println(b.getTitle());
+//                    System.out.println(b.getAuthor());
+//                    System.out.println("=================");
+//                });
+
+//        System.out.println(bookPS.getId());
+//        System.out.println(bookPS.getTitle());
+//        System.out.println(bookPS.getAuthor());
+//        System.out.println("=================");
+
+        // then
+        assertEquals(id, bookPS.getId());
+        assertEquals(title, bookPS.getTitle());
+        assertEquals(author, bookPS.getAuthor());
+
+    }
+
 }
