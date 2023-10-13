@@ -1,9 +1,11 @@
 package com.example.JunitExercize.web.dto;
 
 import com.example.JunitExercize.domain.Book;
+import lombok.Getter;
 import lombok.Setter;
 
 @Setter // Controller 에서 Setter가 호출 되면서 Dto에 값이 채워짐.
+@Getter
 public class BookSaveReqDto {
     private String title;
     private String author;
