@@ -1,5 +1,6 @@
 package com.example.JunitExercize.domain;
 
+import com.example.JunitExercize.web.dto.BookRespDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,4 +30,14 @@ public class Book {
         this.title = title;
         this.author = author;
     }
+
+    public BookRespDto toDto() {
+        return BookRespDto.builder()
+                .id(id)
+                .title(title)
+                .author(author)
+                .build();
+    }
+
+
 }
