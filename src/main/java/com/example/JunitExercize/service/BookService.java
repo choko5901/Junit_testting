@@ -3,8 +3,9 @@ package com.example.JunitExercize.service;
 import com.example.JunitExercize.domain.Book;
 import com.example.JunitExercize.domain.BookRepository;
 import com.example.JunitExercize.util.MailSender;
-import com.example.JunitExercize.web.dto.BookRespDto;
-import com.example.JunitExercize.web.dto.BookSaveReqDto;
+import com.example.JunitExercize.web.dto.response.BookListRespDto;
+import com.example.JunitExercize.web.dto.response.BookRespDto;
+import com.example.JunitExercize.web.dto.request.BookSaveReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +33,14 @@ public class BookService {
     }
 
     // 2. 책 목록보기
-    public List<BookRespDto> 책목록보기(){
-        return bookRepository.findAll().stream()
+    public BookListRespDto 책목록보기(){
+       List<BookRespDto> dtos = bookRepository.findAll().stream()
                 .map(Book :: toDto) // 객체 하나를 꺼내서 toDto타게끔 하는 메소드 참조식 문법
 //                .map((bookPS) -> new BookRespDto().toDto(bookPS))
                 .collect(Collectors.toList());
+        BookListRespDto bookListRespDto = BookListRespDto.builder().bookList(dtos).build();
+
+        return bookListRespDto;
     }
 
     // 3. 책한권 보기

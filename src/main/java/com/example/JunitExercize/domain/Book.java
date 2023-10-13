@@ -1,6 +1,6 @@
 package com.example.JunitExercize.domain;
 
-import com.example.JunitExercize.web.dto.BookRespDto;
+import com.example.JunitExercize.web.dto.response.BookRespDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
