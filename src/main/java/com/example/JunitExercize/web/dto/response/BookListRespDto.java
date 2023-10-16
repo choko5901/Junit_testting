@@ -6,9 +6,9 @@ import lombok.Getter;
 import java.util.List;
 @Getter
 public class BookListRespDto {
-    List<BookRespDto> itmes;
+    List<BookRespDto> items;
     @Builder
     public BookListRespDto(List<BookRespDto> bookList) {
-        this.itmes = bookList;
+        this.items = bookList;
     }
 }

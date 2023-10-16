@@ -60,10 +60,10 @@ public class BookserviceTest {
         //when
         BookListRespDto bookListRespDto = bookService.책목록보기();
         //then
-        assertThat(bookListRespDto.getItmes().get(0).getTitle()).isEqualTo("junit 기초");
-        assertThat(bookListRespDto.getItmes().get(0).getAuthor()).isEqualTo("더존 출판사");
-        assertThat(bookListRespDto.getItmes().get(1).getTitle()).isEqualTo("Spring 기초");
-        assertThat(bookListRespDto.getItmes().get(1).getAuthor()).isEqualTo("비즈온 출판사");
+        assertThat(bookListRespDto.getItems().get(0).getTitle()).isEqualTo("junit 기초");
+        assertThat(bookListRespDto.getItems().get(0).getAuthor()).isEqualTo("더존 출판사");
+        assertThat(bookListRespDto.getItems().get(1).getTitle()).isEqualTo("Spring 기초");
+        assertThat(bookListRespDto.getItems().get(1).getAuthor()).isEqualTo("비즈온 출판사");
     }
 
     @Test

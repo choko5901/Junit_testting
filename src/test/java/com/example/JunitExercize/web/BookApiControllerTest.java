@@ -1,16 +1,22 @@
 package com.example.JunitExercize.web;
 
+import com.example.JunitExercize.domain.Book;
+import com.example.JunitExercize.domain.BookRepository;
 import com.example.JunitExercize.service.BookService;
 import com.example.JunitExercize.web.dto.request.BookSaveReqDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import org.assertj.core.api.IntegerAssert;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -24,6 +30,8 @@ public class BookApiControllerTest {
 
     @Autowired
     private TestRestTemplate rt;
+    @Autowired
+    private BookRepository bookRepository;
     private static ObjectMapper om;
     private static HttpHeaders headers;
     @BeforeAll
@@ -31,6 +39,17 @@ public class BookApiControllerTest {
         om = new ObjectMapper();
         headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+    }
+
+    @BeforeEach // 각 테스트 메소드 시작전 매번 시행
+    public void 데이터준비(){
+        String title = "Junit 기초";
+        String author = "더존도서";
+        Book book = Book.builder()
+                .title(title)
+                .author(author)
+                .build();
+        bookRepository.save(book);
     }
 
 
@@ -58,4 +77,75 @@ public class BookApiControllerTest {
         assertThat(title).isEqualTo("Junit 기초");
         assertThat(author).isEqualTo("더존 출판사");
     }
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void getBookList_test(){
+        //given
+
+        //when
+        HttpEntity<String> requset = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book", HttpMethod.GET, requset, String.class);
+        System.out.println(response.getBody());
+        //then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        Integer code = dc.read("$.code");
+        String title = dc.read("$.body.items[0].title");
+        assertThat(code).isEqualTo(1);
+        assertThat(title).isEqualTo("Junit 기초");
+    }
+
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void getBookOne_test(){
+        //given
+        Integer id = 1;
+        //when
+        HttpEntity<String> requset = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book/" + id, HttpMethod.GET, requset, String.class);
+        System.out.println(response.getBody());
+        //then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        Integer code = dc.read("$.code");
+        String title = dc.read("$.body.title");
+        assertThat(code).isEqualTo(1);
+        assertThat(title).isEqualTo("Junit 기초");
+    }
+
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void deleteBook_test(){
+        //given
+        Integer id = 1;
+        //when
+        HttpEntity<String> requset = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book/" + id, HttpMethod.DELETE, requset, String.class);
+        System.out.println(response.getBody());
+        //then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        Integer code = dc.read("$.code");
+        assertThat(code).isEqualTo(1);
+    }
+
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void updateBook_test() throws JsonProcessingException {
+        //given
+        Integer id =1;
+        BookSaveReqDto bookSaveReqDto = new BookSaveReqDto();
+        bookSaveReqDto.setTitle("spring");
+        bookSaveReqDto.setAuthor("비즈온 출판사");
+
+        String body = om.writeValueAsString(bookSaveReqDto);
+
+        //when
+        HttpEntity<String> requset = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book/" + id, HttpMethod.PUT, requset, String.class);
+        System.out.println(response.getBody());
+        //then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        String title = dc.read("$.body.title");
+        assertThat(title).isEqualTo("spring");
+    }
+
+
 }
